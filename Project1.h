@@ -14,6 +14,7 @@
 #include <unistd.h> /* needed for fork() */
 #include <stdio.h>  /* needed for printf() and perror() */
 #include <stdlib.h>
+#include <regex>
 using namespace std;
 
 //Function Prototypes

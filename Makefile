@@ -8,8 +8,8 @@
 
 # Set up info for C++ implicit rule
 CXX = g++
-CXXFLAGS = -Wall 
-CPPFLAGS = 
+CXXFLAGS = -Wall -Wextra -Werror
+CPPFLAGS = -std=c++11
 #
 # Set up any Linker Flags
 LDFLAGS = 
@@ -36,7 +36,7 @@ OBJS = $(SRCS:cc=o)
 all: $(EXEC)
 
 clean:
-	rm -f $(OBJS) *.d *~ \#* $(EXEC)
+	rm -f $(OBJS) *.d *~ \#* $(EXEC) *.d.*
 
 Makefile: $(SRCS:.cc=.d)
 
