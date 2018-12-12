@@ -21,7 +21,7 @@ PROJECTNAME = CS4348.Project1
 
 #
 # We choose the source files to include and name the output
-SRCS = Project1.cc
+SRCS = Project1.cc Memory.cc
 
 #
 # We choose the name of the executable to be created

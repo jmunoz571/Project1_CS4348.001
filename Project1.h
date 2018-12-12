@@ -15,9 +15,15 @@
 #include <stdio.h>  /* needed for printf() and perror() */
 #include <stdlib.h>
 #include <regex>
+#include "Memory.h"//Memory object
 using namespace std;
 
 //Function Prototypes
+void initMem(fstream* , Memory, int);
+int parseString(string, bool*);
+int processCPU(int, int*);
+void rw();
+
 //Extern Vars
 
 #endif 
