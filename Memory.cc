@@ -13,7 +13,7 @@ using namespace std;
 //Prints the contents of the mem array
 void Memory::display(){
   for(int i= 0; i < 250; i++){
-    printf("[%.4d]-%.2d\t[%.4d]-%.2d\t[%.4d]-%.2d\t[%.4d]-%.2d\t[%.4d]-%.2d\t[%.4d]-%.2d\t[%.4d]-%.2d\t[%.4d]-%.2d\t", 
+    printf(" 0x%.3X - %2d   0x%.3X - %2d   0x%.3X - %2d   0x%.3X - %2d   0x%.3X - %2d   0x%.3X - %2d   0x%.3X - %2d   0x%.3X - %2d\n", 
     i, mem[i], i+(250*1), mem[i+(250*1)], i+(250*2), mem[i+(250*2)], i+(250*3), mem[i+(250*3)], i+(250*4), mem[i+(250*4)], i+(250*5), mem[i+(250*5)], i+(250*6), mem[i+(250*6)], i+(250*7), mem[i+(250*7)]);
   }
 }

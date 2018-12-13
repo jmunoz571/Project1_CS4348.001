@@ -19,7 +19,7 @@
 using namespace std;
 
 //Function Prototypes
-void initMem(fstream* , Memory, int);
+void initMem(fstream* , Memory*, int);
 int parseString(string, bool*);
 int processCPU(int, int*);
 void rw();

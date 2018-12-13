@@ -29,7 +29,6 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-
   //Variables
   Memory mem; //memory object to store the instructions 
   // int registers[6];
@@ -45,7 +44,7 @@ int main(int argc, char *argv[])
   }
   
   //initialize the memory array
-  initMem(&dataFile, mem, 2000);
+  initMem(&dataFile, &mem, 2000);
 
   mem.display();
   
@@ -113,8 +112,7 @@ int parseString(string line, bool *dotFlag)
       *dotFlag = true;
     else if(isdigit(chr)){
       numb+= chr;
-    }
-    //if the current char is not a digit it is the begining of a comment
+    }//if the current char is not a digit it is the begining of a comment
     else{
       break;
     }
@@ -127,7 +125,7 @@ int parseString(string line, bool *dotFlag)
 }
 
 //given a file stream and an int array, the function reads and stores the contents of the file in the int array
-void initMem(fstream *file, Memory mem, int size)
+void initMem(fstream *file, Memory *mem, int size)
 {
   string line = "";
   int i = 0;
@@ -136,10 +134,11 @@ void initMem(fstream *file, Memory mem, int size)
   while(!file->eof() && i < size)
   {
     getline(*file, line);
-    //cout << i << "-" << line << endl;
+    //--cout << i << "-" << line << endl;
     x = parseString(line, &flag);
+    //--cout << i << " - " << x << endl;
     if(flag){
-      //cout << "." << x << endl;
+      //--cout << "." << x << endl;
       //if "." is at the begining of the line, then the following number is the new index
       i = x; 
       //reset the dot flag and do not increment the index
@@ -147,9 +146,11 @@ void initMem(fstream *file, Memory mem, int size)
     }
     else{
       //store the value x at the current index i, and increment the index
-      // cout  << x << endl;
-      mem.write(i, x);
-      i++;
+      //--cout  << x << endl;
+      if(x > -1){
+	mem->write(i, x);
+	i++;
+      }
     }
   }
 }
