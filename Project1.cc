@@ -9,8 +9,9 @@
 --------------------------------------------------------------*/
 #include "Project1.h"
 
+enum modes{R,W};
 enum registNames{PC, SP, IR, AC, X, Y};
-
+enum pipeCmds{MODE, ADD, VAL};
 
 int main(int argc, char *argv[])
 {
@@ -22,17 +23,21 @@ int main(int argc, char *argv[])
   //Setup PIC pips
   int pipeMemToCpu[2];
   int pipeCpuToMem[2];
-  
+
+  //int buffer for pipe
+  int buff[3];
+  //  int buff2[3];
+    
   //check to see if pipes sucessfully opened
-  if(pipe(pipeMemToCpu) < 0 || pipe(pipeCpuToMem)){
-    write(STDERR_FILENO, "Pipe Failed\n", 14);
+  if(pipe(pipeMemToCpu) < 0 || pipe(pipeCpuToMem) < 0) {
+    write(STDERR_FILENO, "Pipe(s) Failed\n", 14);
     exit(1);
   }
 
   //Variables
   Memory mem; //memory object to store the instructions 
   // int registers[6];
-  char chr;
+
 
   //Read instructions from file
   fstream dataFile; 
@@ -44,9 +49,9 @@ int main(int argc, char *argv[])
   }
   
   //initialize the memory array
-  initMem(&dataFile, &mem, 2000);
+  //initMem(&dataFile, &mem, 2000);
 
-  mem.display();
+  //mem.display(2);
   
   //setup PIC - pipes
 
@@ -59,34 +64,41 @@ int main(int argc, char *argv[])
     write(STDERR_FILENO, "Fork Failed\n", 14);
     exit(2);
   case 0: //current process is the child (CPU Process)
-    printf("I am the child: pid - %ld\n", (long) getpid());
+    printf("I am the child: this.pid = %ld\n", (long) getpid());
+    /*
     //set up two pipes to be used in stdin and stdou of child's
-    dup2(pipeMemToCpu[0], STDIN_FILENO);
-    dup2(pipeCpuToMem[1], STDOUT_FILENO);
-    //Close the unsused pipes
-    close(pipeMemToCpu[0]);
+    dup2(pipeMemToCpu[0], 3);
+    dup2(pipeCpuToMem[1], 4);
+    */
+    //Close uncessary pipes
     close(pipeMemToCpu[1]);
     close(pipeCpuToMem[0]);
-    close(pipeCpuToMem[1]);
+ 
     //CPU working 
     while(true){
-      rw();
+      read(pipeMemToCpu[R], &buff, sizeof(buff));
+      cout << "CPU: "<< buff[0];
+      buff[2] = buff[0] + 1;
+      write(pipeCpuToMem[W], &buff, sizeof(buff));
     }
     exit(1);
   default: //current process is the parent (Memory Process)
-    printf("I am the parent: pid - %ld\n", (long) pid);
+    printf("I am the parent: this.pid - %ld, child.pid - %ld\n",(long) getpid(), (long) pid);
     //close unused pipes
-    close(pipeMemToCpu[0]);
-    close(pipeCpuToMem[1]);
+    close(pipeMemToCpu[R]);
+    close(pipeCpuToMem[W]);
+
     //Mem does work
     int i = 0;
     while(i < 3){
-      cin >> chr;
-      cout << "Sent: " << chr << endl;
-      write(pipeMemToCpu[1], &chr, 1);
+      scanf("%d", &buff[0]);
+      buff[1] = 0;
+      buff[2] = 0;
+      printf("Sent: %d, %d, %d. \n", buff[0], buff[1],  buff[2] );
+      write(pipeMemToCpu[W], &buff, sizeof(buff));
       wait();
-      read(pipeCpuToMem[0], &chr, 1);
-      cout << "Read: " << chr << endl;
+      read(pipeCpuToMem[R], &buff, sizeof(buff));
+      printf("Received: %d, %d, %d. \n", buff[0], buff[1],  buff[2] );
       i++;
     }
     exit(3);
@@ -134,7 +146,6 @@ void initMem(fstream *file, Memory *mem, int size)
   while(!file->eof() && i < size)
   {
     getline(*file, line);
-    //--cout << i << "-" << line << endl;
     x = parseString(line, &flag);
     //--cout << i << " - " << x << endl;
     if(flag){
@@ -147,7 +158,7 @@ void initMem(fstream *file, Memory *mem, int size)
     else{
       //store the value x at the current index i, and increment the index
       //--cout  << x << endl;
-      if(x > -1){
+      if(x > -1){ //if the current line is not a space
 	mem->write(i, x);
 	i++;
       }
@@ -156,15 +167,14 @@ void initMem(fstream *file, Memory *mem, int size)
 }
 
 void rw(){
-  char val;
-  cin >> val;
-  val++;
-  cout << val;
+  cout << "\n" << endl;
 }
 
-int processCPU(int inst, int*registers){
+int processCPU(int*registers, int value, Memory*mem){
   registers[0] = 0;
-  switch(inst)
+  mem->read(0);
+  value++;
+  switch(registers[IR])
     {
     case 1: //=Load value
       //Load the value into the AC

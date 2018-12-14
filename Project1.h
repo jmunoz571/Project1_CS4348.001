@@ -21,7 +21,7 @@ using namespace std;
 //Function Prototypes
 void initMem(fstream* , Memory*, int);
 int parseString(string, bool*);
-int processCPU(int, int*);
+int processCPU( int*, int, Memory*);
 void rw();
 
 //Extern Vars

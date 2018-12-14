@@ -45,7 +45,7 @@ public:
     }
   }
   //Methods
-  void display();//prints the contents of the mem array
+  void display(int);//prints the contents of the mem array
 
 };
 
