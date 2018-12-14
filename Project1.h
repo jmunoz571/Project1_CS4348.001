@@ -21,9 +21,10 @@ using namespace std;
 //Function Prototypes
 void initMem(fstream* , Memory*, int);
 int parseString(string, bool*);
-int processCPU( int*, int, Memory*);
-void rw();
-
+int processCPU( int*, int);
+int fetch(int);
+void store(int, int);
+bool isInstruction(int);
 //Extern Vars
 
 #endif 
