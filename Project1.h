@@ -21,7 +21,7 @@ using namespace std;
 //Function Prototypes
 void initMem(fstream* , Memory*, int);
 int parseString(string, bool*);
-int processCPU( int*, int);
+int proccessCPU( int*, int);
 int fetch(int);
 void store(int, int);
 bool isInstruction(int);

@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
   Memory mem; //memory object to store the instructions 
   bool done = false;
   //buff = {0,0,0,0};
-  // int registers[6];
+  int reg[6];
   int x = atoi(argv[2]); //store X value
   cout << x << endl;
   //Read instructions from file
@@ -67,25 +67,37 @@ int main(int argc, char *argv[])
     exit(2);
   case 0: //current process is the child (CPU Process)
     {
-    printf("I am the child: this.pid = %ld\n", (long) getpid());
+    printf("Child process: this.pid = %ld\n", (long) getpid());
     //Close uncessary ends of both pipes
     close(pipeMemToCpu[W]);
     close(pipeCpuToMem[R]);
+    //set up initial register values
+    reg[PC] = 0; 
+    reg[SP] = 2000; //system stack begins at end of memory and grows towards 0; 
+    reg[IR] = reg[AC] = reg[X] = reg[Y] = 0;
     int i = 0;
+    
     //CPU working 
-    while(i < 4){
-      //Fetch the first instruction ( PC = 0) by writing a request to Memory
-      int u = fetch(i);
-      printf("Add Request: %d. --> ", u);
+    while(i < 100){
+      //Fetch instruction ( PC = PC + 1 ) sending request to Memory
+      fetch(reg[PC]); //pass in address of current line
+      reg[IR] = buff[INS]; 
+      int temp = buff[VAL];
+      //printf("Request: %d.  ", u);
       //printf("Received: M=%d, A=%d, I=%d, V=%d. \n", buff[0], buff[1],  buff[2], buff[3]);
-      store(i+5, 123);
+      
+      //Execute the instruction
+      temp = proccessCPU(reg, temp);
+      if( temp < 0)
+	break;
+      //Increment the PC
+      reg[PC]++;
       i++;
-      //buff[ADD] = i;
     }
     done = true;
     }
   default: //current process is the parent (Memory Process)
-    printf("I am the parent: this.pid - %ld, child.pid - %ld\n",(long) getpid(), (long) pid);
+    printf("Parent process: child.pid - %ld,  pid - %ld,\n",(long) getpid(), (long) pid);
     //close unused pipes
     close(pipeMemToCpu[R]);
     close(pipeCpuToMem[W]);
@@ -159,7 +171,7 @@ void initMem(fstream *file, Memory *mem, int size)
       //--cout << "." << x << endl;
       //if "." is at the begining of the line, then the following number is the new index
       i = x; 
-      //reset the dot flag and do not increment the index
+      //reset the '.' flag and do not increment the index
       flag = false;
     }
     else{
@@ -172,7 +184,7 @@ void initMem(fstream *file, Memory *mem, int size)
     }
   }
 }
-int processCPU(int*reg, int value){
+int proccessCPU(int*reg, int value){
   switch(reg[IR])
     {
     case 1: //=Load value

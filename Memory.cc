@@ -16,7 +16,7 @@ void Memory::display(int opt){
     {
     case 2: //prints 2 colums
       for(int i= 0; i < 25; i++){
-	printf("   0x%.3X - %2d   0x%.3X - %2d   0x%.3X - %2d   0x%.3X - %2d\n", 
+	printf("   0x%.3X - %3d   0x%.3X - %3d   0x%.3X - %3d   0x%.3X - %3d\n", 
 	       i, mem[i], i+(25*1), mem[i+(25*1)], i+(25*2), mem[i+(25*2)], i+(25*3), mem[i+(25*3)]);
       }
       break;
